@@ -42,10 +42,19 @@ const App: React.FC = () => {
     scrollTarget.set(current + delta);
   };
 
+  const [orientations, setOrientations] = useState<string[]>([]);
+
+  useEffect(() => {
+    // reset orientations whenever a new project is selected
+    setOrientations([]);
+  }, [selectedId]);
+
   const selectedProject = PROJECTS.find(p => p.id === selectedId) as DetailedProject | undefined;
 
-  // 为详情页生成本地图片路径，遵循 arch_XX_01.jpg 模式
+  // 为详情页生成本地图片路径，优先使用 project.detailImages（如果存在），否则遵循 arch_XX_01.jpg 模式
   const getDetailImages = (project: DetailedProject) => {
+    if (project.detailImages && project.detailImages.length) return project.detailImages;
+
     const images = [];
     // 假设架构项目的文件夹内有 _01.jpg 到 _08.jpg 的详情图
     // 比如 image/arch_01.jpg 对应 image/arch_01_01.jpg, image/arch_01_02.jpg...
@@ -124,7 +133,7 @@ const App: React.FC = () => {
                        transition={{ delay: 0.3, duration: 0.8 }}
                        className="text-[10px] font-medium tracking-[0.1em] text-black/40 uppercase"
                     >
-                      {selectedProject.category} / {selectedProject.year}
+                      {selectedProject.year}
                     </motion.div>
                   </div>
 
@@ -148,21 +157,47 @@ const App: React.FC = () => {
                 initial={{ opacity: 0, y: 50 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                className="w-full grid grid-cols-1 md:grid-cols-2 gap-0"
+                className={selectedProject.category === 'Photography' ? 'w-full flex flex-wrap gap-0' : 'w-full grid grid-cols-1 md:grid-cols-2 gap-0'}
               >
-                {(selectedProject.category === 'Architecture' ? getDetailImages(selectedProject) : [selectedProject.imageUrl, selectedProject.imageUrl]).map((imgUrl, idx) => (
-                  <div key={idx} className="w-full aspect-[3/4] overflow-hidden bg-neutral-100">
-                    <img 
-                      src={imgUrl} 
-                      alt={`${selectedProject.title} detail ${idx + 1}`} 
-                      className="w-full h-full object-cover block transition-transform duration-1000 hover:scale-105"
-                      onError={(e) => {
-                        // 如果本地详情图不存在，回退到主图
-                        (e.target as HTMLImageElement).src = selectedProject.imageUrl;
-                      }}
-                    />
-                  </div>
-                ))}
+                {(() => {
+                  const imagesToShow = getDetailImages(selectedProject);
+                  return imagesToShow.map((imgUrl, idx) => {
+                    // orientation state is tracked in React state; determine default class
+                    const orientation = orientations[idx];
+                    const isLandscape = orientation !== 'portrait';  // default to full-width until we know it's portrait
+
+                    return (
+                      <div
+                        key={idx}
+                        className={selectedProject.category === 'Photography'
+                          ? (isLandscape ? 'w-full overflow-hidden bg-neutral-100' : 'w-1/2 overflow-hidden bg-neutral-100')
+                          : 'w-full aspect-[3/4] overflow-hidden bg-neutral-100'}
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`${selectedProject.title} detail ${idx + 1}`}
+                          className={selectedProject.category === 'Photography'
+                            ? 'w-full block'
+                            : 'w-full h-full object-cover block transition-transform duration-1000 hover:scale-105'}
+                          onLoad={(e) => {
+                            // detect orientation and set state so layout can adjust
+                            const imgEl = e.currentTarget as HTMLImageElement;
+                            const isL = imgEl.naturalWidth >= imgEl.naturalHeight;
+                            setOrientations(prev => {
+                              const next = [...prev];
+                              next[idx] = isL ? 'landscape' : 'portrait';
+                              return next;
+                            });
+                          }}
+                          onError={(e) => {
+                            // 如果某张图加载错误，回退到主图
+                            (e.target as HTMLImageElement).src = selectedProject.imageUrl;
+                          }}
+                        />
+                      </div>
+                    );
+                  });
+                })()}
               </motion.div>
 
               {/* Footer */}

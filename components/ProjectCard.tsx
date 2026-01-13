@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, MotionValue, useTransform } from 'framer-motion';
 import { Project } from '../types';
 import { PROJECTS } from '../constants';
@@ -17,8 +17,69 @@ const wrap = (min: number, max: number, v: number) => {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, scrollProgress, onSelect }) => {
   const [isHovered, setIsHovered] = useState(false);
+
+  // WebAudio for subtle flip sound on hover
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const playingRef = useRef(false);
+
+  const playFlipSound = () => {
+    try {
+      let ctx = audioCtxRef.current;
+      if (!ctx) {
+        ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioCtxRef.current = ctx;
+      }
+      if (ctx.state === 'suspended') ctx.resume();
+      if (playingRef.current) return;
+      playingRef.current = true;
+
+      const bufferSize = Math.floor(ctx.sampleRate * 0.18); // ~180ms noise burst
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
+
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 1200;
+      filter.Q.value = 0.8;
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.12, ctx.currentTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+
+      src.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      src.start();
+      src.stop(ctx.currentTime + 0.18);
+      src.onended = () => {
+        playingRef.current = false;
+        try { src.disconnect(); filter.disconnect(); gain.disconnect(); } catch(_) {}
+      };
+    } catch (e) {
+      console.warn('Play flip sound failed', e);
+      playingRef.current = false;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (audioCtxRef.current) {
+        audioCtxRef.current.close();
+        audioCtxRef.current = null;
+      }
+    };
+  }, []);
+
   const total = PROJECTS.length;
-  const halfTotal = total / 2;
+  const halfTotal = total / 2; 
 
   const relativePosition = useTransform(scrollProgress, (v) => {
     return wrap(-halfTotal, halfTotal, index - v);
@@ -117,7 +178,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, scroll
           transformStyle: 'preserve-3d',
           opacity: 1 
         }}
-        onMouseEnter={() => setIsHovered(true)}
+        onMouseEnter={() => { setIsHovered(true); playFlipSound(); }}
         onMouseLeave={() => setIsHovered(false)}
         onClick={() => onSelect(project.id)}
         animate={{ 
@@ -149,16 +210,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, scroll
             
             <div className="absolute inset-0 bg-gradient-to-tr from-white/10 via-transparent to-black/5 pointer-events-none" />
             
-            <div className="absolute bottom-6 left-6 text-black pointer-events-none">
-              <h2 className="text-3xl font-bold tracking-tight leading-none mb-1">
-                {project.title}
-              </h2>
-              <div className="flex items-center gap-3 text-[9px] font-semibold tracking-[0.3em] opacity-60">
-                <span>{project.category.toUpperCase()}</span>
-                <span className="opacity-30">/</span>
-                <span>{project.year}</span>
-              </div>
-            </div>
+
 
             <div className="absolute top-6 right-6 text-[11px] font-bold opacity-10 pointer-events-none">
               {String(project.id).padStart(2, '0')}
