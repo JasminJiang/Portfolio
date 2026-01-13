@@ -44,12 +44,14 @@ const App: React.FC = () => {
 
   const selectedProject = PROJECTS.find(p => p.id === selectedId) as DetailedProject | undefined;
 
-  // 为详情页生成 8 张 3:4 的图片地址
+  // 为详情页生成本地图片路径，遵循 arch_XX_01.jpg 模式
   const getDetailImages = (project: DetailedProject) => {
     const images = [];
-    for (let i = 0; i < 8; i++) {
-      // 使用 picsum 生成不同但相关的 3:4 图片 (600x800)
-      images.push(`https://picsum.photos/seed/unveil-detail-${project.id}-${i}/600/800`);
+    // 假设架构项目的文件夹内有 _01.jpg 到 _08.jpg 的详情图
+    // 比如 image/arch_01.jpg 对应 image/arch_01_01.jpg, image/arch_01_02.jpg...
+    const baseName = project.imageUrl.replace('.jpg', '');
+    for (let i = 1; i <= 8; i++) {
+      images.push(`${baseName}_${String(i).padStart(2, '0')}.jpg`);
     }
     return images;
   };
@@ -154,6 +156,10 @@ const App: React.FC = () => {
                       src={imgUrl} 
                       alt={`${selectedProject.title} detail ${idx + 1}`} 
                       className="w-full h-full object-cover block transition-transform duration-1000 hover:scale-105"
+                      onError={(e) => {
+                        // 如果本地详情图不存在，回退到主图
+                        (e.target as HTMLImageElement).src = selectedProject.imageUrl;
+                      }}
                     />
                   </div>
                 ))}

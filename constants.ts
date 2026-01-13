@@ -5,9 +5,6 @@ export interface DetailedProject extends Project {
   detailImages?: string[];
 }
 
-// 辅助函数：生成随机占位图
-const getImg = (id: number, w: number = 800, h: number = 800) => `https://picsum.photos/seed/unveil-${id}/${w}/${h}`;
-
 export const PROJECTS: DetailedProject[] = [
   { 
     id: -1, 
@@ -23,7 +20,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "SYMMETRY",
     category: "Architecture",
     year: "2024",
-    imageUrl: getImg(1),
+    imageUrl: "image/arch_01.jpg",
     description: "A formal exploration of balance and geometric precision in modern structural design. This project focuses on the interplay between light and rigid vertical elements."
   },
   {
@@ -31,7 +28,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "OBLIVION",
     category: "Architecture",
     year: "2024",
-    imageUrl: getImg(2),
+    imageUrl: "image/arch_02.jpg",
     description: "Exploring the boundaries of space and time through ephemeral structures. A visual study of how architecture can dissolve into its environment."
   },
   {
@@ -39,7 +36,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "VELOCITY",
     category: "Architecture",
     year: "2023",
-    imageUrl: getImg(3),
+    imageUrl: "image/arch_03.jpg",
     description: "Fluid dynamics applied to stationary forms. This installation captures the essence of movement through aerodynamic curvature."
   },
   {
@@ -47,7 +44,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "ELEMENTAL",
     category: "Architecture",
     year: "2023",
-    imageUrl: getImg(4),
+    imageUrl: "image/arch_04.jpg",
     description: "Back to basics. An investigation into raw materials—stone, wood, and steel—and their tactile relationship with the human observer."
   },
   {
@@ -55,7 +52,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "NEBULOUS",
     category: "Architecture",
     year: "2023",
-    imageUrl: getImg(5),
+    imageUrl: "image/arch_05.jpg",
     description: "An atmospheric installation that uses mist and lighting to create ever-shifting volumes within a fixed cubic frame."
   },
   {
@@ -63,7 +60,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "HORIZON",
     category: "Architecture",
     year: "2022",
-    imageUrl: getImg(6),
+    imageUrl: "image/arch_06.jpg",
     description: "A cantilevered observation deck designed to minimize visual impact on the landscape while providing panoramic views."
   },
   {
@@ -71,7 +68,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "STRUCTURE",
     category: "Architecture",
     year: "2022",
-    imageUrl: getImg(7),
+    imageUrl: "image/arch_07.jpg",
     description: "The core identity of our studio. This project showcases our signature approach to modular building systems and sustainable materials."
   },
   { 
@@ -88,7 +85,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "BAMBOO PAVILION",
     category: "Photography",
     year: "2024",
-    imageUrl: getImg(8),
+    imageUrl: "image/photo_01.jpg",
     description: "Capturing the filtered light through natural textures. A photographic journey through organic patterns and sustainable living spaces."
   },
   {
@@ -96,7 +93,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "DYNASTY SCROLL",
     category: "Photography",
     year: "2023",
-    imageUrl: getImg(9),
+    imageUrl: "image/photo_02.jpg",
     description: "A visual narrative connecting traditional craftsmanship with modern minimalist aesthetics. Reimagining heritage through a contemporary lens."
   },
   {
@@ -104,7 +101,7 @@ export const PROJECTS: DetailedProject[] = [
     title: "CHROME ATELIER",
     category: "Photography",
     year: "2024",
-    imageUrl: getImg(10),
+    imageUrl: "image/photo_03.jpg",
     description: "The beauty of industrial utility. Exploring the textures of brushed metal, concrete, and high-precision machinery."
   }
 ];
