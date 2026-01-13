@@ -44,13 +44,12 @@ const App: React.FC = () => {
 
   const selectedProject = PROJECTS.find(p => p.id === selectedId) as DetailedProject | undefined;
 
-  // Helper to generate 8 detail image URLs for architecture projects
-  // In a real app, these would come from the Project object data
+  // 为详情页生成 8 张 3:4 的图片地址
   const getDetailImages = (project: DetailedProject) => {
-    const images = [project.imageUrl];
-    // For demonstration, we'll repeat the main image or use indexed variations
-    for (let i = 1; i < 8; i++) {
-      images.push(project.imageUrl);
+    const images = [];
+    for (let i = 0; i < 8; i++) {
+      // 使用 picsum 生成不同但相关的 3:4 图片 (600x800)
+      images.push(`https://picsum.photos/seed/unveil-detail-${project.id}-${i}/600/800`);
     }
     return images;
   };
@@ -93,7 +92,7 @@ const App: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[200] bg-white overflow-y-auto"
+            className="fixed inset-0 z-[200] bg-white overflow-y-auto no-scrollbar"
           >
             {/* Close Button */}
             <button 
@@ -108,13 +107,12 @@ const App: React.FC = () => {
               {/* Header / Text Section */}
               <div className="max-w-[1440px] mx-auto pt-[20vh] pb-[10vh] px-10 md:px-20">
                 <div className="flex flex-col md:flex-row gap-10 md:gap-40 items-start">
-                  {/* Left: Project Title */}
                   <div className="w-full md:w-1/3">
                     <motion.h1 
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.2, duration: 0.8 }}
-                      className="text-[11px] font-bold tracking-[0.3em] uppercase mb-4 opacity-100"
+                      className="text-[11px] font-bold tracking-[0.3em] uppercase mb-4"
                     >
                       {selectedProject.title}
                     </motion.h1>
@@ -128,7 +126,6 @@ const App: React.FC = () => {
                     </motion.div>
                   </div>
 
-                  {/* Right: Description Text */}
                   <div className="w-full md:w-1/2">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -137,77 +134,32 @@ const App: React.FC = () => {
                       className="text-[13px] md:text-sm leading-[1.8] text-black/70 font-medium max-w-lg"
                     >
                       <p>
-                        {selectedProject.description || "A visual exploration of form and materiality. This project represents a deep dive into minimalist principles and structural clarity."}
-                      </p>
-                      <p className="mt-4 opacity-50">
-                        Designed with focus on contemporary visual language and tactile interaction.
+                        {selectedProject.description}
                       </p>
                     </motion.div>
                   </div>
                 </div>
               </div>
 
-              {/* Detail Gallery - Specialized for Architecture */}
-              {selectedProject.category === 'Architecture' ? (
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full grid grid-cols-1 md:grid-cols-2 gap-0"
-                >
-                  {getDetailImages(selectedProject).map((imgUrl, idx) => (
-                    <div key={idx} className="w-full aspect-[3/4] overflow-hidden bg-neutral-100">
-                      <img 
-                        src={imgUrl} 
-                        alt={`${selectedProject.title} detail ${idx + 1}`} 
-                        className="w-full h-full object-cover block"
-                      />
-                    </div>
-                  ))}
-                </motion.div>
-              ) : (
-                /* Fallback layout for other categories */
-                <motion.div 
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                  className="w-full flex flex-col"
-                >
-                  <div className="w-full overflow-hidden bg-neutral-100">
+              {/* Seamless Gallery Section */}
+              <motion.div 
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 1, ease: [0.22, 1, 0.36, 1] }}
+                className="w-full grid grid-cols-1 md:grid-cols-2 gap-0"
+              >
+                {(selectedProject.category === 'Architecture' ? getDetailImages(selectedProject) : [selectedProject.imageUrl, selectedProject.imageUrl]).map((imgUrl, idx) => (
+                  <div key={idx} className="w-full aspect-[3/4] overflow-hidden bg-neutral-100">
                     <img 
-                      src={selectedProject.imageUrl} 
-                      alt={selectedProject.title} 
-                      className="w-full h-auto object-cover block"
+                      src={imgUrl} 
+                      alt={`${selectedProject.title} detail ${idx + 1}`} 
+                      className="w-full h-full object-cover block transition-transform duration-1000 hover:scale-105"
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
-                    <div className="aspect-[4/5] bg-neutral-50 overflow-hidden">
-                      <img 
-                        src={selectedProject.imageUrl} 
-                        alt="Detail view 01" 
-                        className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700 block"
-                        style={{ filter: 'grayscale(1)' }}
-                      />
-                    </div>
-                    <div className="aspect-[4/5] bg-neutral-50 overflow-hidden">
-                      <img 
-                        src={selectedProject.imageUrl} 
-                        alt="Detail view 02" 
-                        className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-700 block"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full overflow-hidden bg-neutral-100 h-[80vh]">
-                    <img 
-                      src={selectedProject.imageUrl} 
-                      alt="Atmospheric shot" 
-                      className="w-full h-full object-cover block"
-                    />
-                  </div>
-                </motion.div>
-              )}
+                ))}
+              </motion.div>
 
-              {/* Detail View Footer */}
+              {/* Footer */}
               <div className="py-40 px-10 text-center">
                  <button 
                   onClick={() => setSelectedId(null)}

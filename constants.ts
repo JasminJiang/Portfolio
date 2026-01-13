@@ -1,16 +1,12 @@
 import { Project } from './types';
 
-/**
- * PROJECT IMAGE CONFIGURATION
- * To use your own images:
- * 1. Place your images in a folder named 'image' in the project root.
- * 2. Ensure filenames match the paths below (e.g., 'image/arch_01.jpg').
- * 3. Supported formats: .jpg, .png, .webp, etc.
- */
-
 export interface DetailedProject extends Project {
   description?: string;
+  detailImages?: string[];
 }
+
+// 辅助函数：生成随机占位图
+const getImg = (id: number, w: number = 800, h: number = 800) => `https://picsum.photos/seed/unveil-${id}/${w}/${h}`;
 
 export const PROJECTS: DetailedProject[] = [
   { 
@@ -27,55 +23,55 @@ export const PROJECTS: DetailedProject[] = [
     title: "SYMMETRY",
     category: "Architecture",
     year: "2024",
-    imageUrl: "image/arch_01.jpg",
+    imageUrl: getImg(1),
     description: "A formal exploration of balance and geometric precision in modern structural design. This project focuses on the interplay between light and rigid vertical elements."
   },
   {
     id: 2,
     title: "OBLIVION",
-    category: "Experimental",
+    category: "Architecture",
     year: "2024",
-    imageUrl: "image/arch_02.jpg",
+    imageUrl: getImg(2),
     description: "Exploring the boundaries of space and time through ephemeral structures. A visual study of how architecture can dissolve into its environment."
   },
   {
     id: 3,
     title: "VELOCITY",
-    category: "Automotive",
+    category: "Architecture",
     year: "2023",
-    imageUrl: "image/arch_03.jpg",
+    imageUrl: getImg(3),
     description: "Fluid dynamics applied to stationary forms. This installation captures the essence of movement through aerodynamic curvature."
   },
   {
     id: 4,
     title: "ELEMENTAL",
-    category: "Research",
+    category: "Architecture",
     year: "2023",
-    imageUrl: "image/arch_04.jpg",
+    imageUrl: getImg(4),
     description: "Back to basics. An investigation into raw materials—stone, wood, and steel—and their tactile relationship with the human observer."
   },
   {
     id: 5,
     title: "NEBULOUS",
-    category: "Installation",
+    category: "Architecture",
     year: "2023",
-    imageUrl: "image/arch_05.jpg",
+    imageUrl: getImg(5),
     description: "An atmospheric installation that uses mist and lighting to create ever-shifting volumes within a fixed cubic frame."
   },
   {
     id: 6,
     title: "HORIZON",
-    category: "Structure",
+    category: "Architecture",
     year: "2022",
-    imageUrl: "image/arch_06.jpg",
+    imageUrl: getImg(6),
     description: "A cantilevered observation deck designed to minimize visual impact on the landscape while providing panoramic views."
   },
   {
     id: 7,
     title: "STRUCTURE",
-    category: "Studio",
+    category: "Architecture",
     year: "2022",
-    imageUrl: "image/arch_07.jpg",
+    imageUrl: getImg(7),
     description: "The core identity of our studio. This project showcases our signature approach to modular building systems and sustainable materials."
   },
   { 
@@ -90,25 +86,25 @@ export const PROJECTS: DetailedProject[] = [
   {
     id: 8,
     title: "BAMBOO PAVILION",
-    category: "Atmospheric",
+    category: "Photography",
     year: "2024",
-    imageUrl: "image/photo_01.jpg",
+    imageUrl: getImg(8),
     description: "Capturing the filtered light through natural textures. A photographic journey through organic patterns and sustainable living spaces."
   },
   {
     id: 9,
     title: "DYNASTY SCROLL",
-    category: "Historical",
+    category: "Photography",
     year: "2023",
-    imageUrl: "image/photo_02.jpg",
+    imageUrl: getImg(9),
     description: "A visual narrative connecting traditional craftsmanship with modern minimalist aesthetics. Reimagining heritage through a contemporary lens."
   },
   {
     id: 10,
     title: "CHROME ATELIER",
-    category: "Industrial",
+    category: "Photography",
     year: "2024",
-    imageUrl: "image/photo_03.jpg",
+    imageUrl: getImg(10),
     description: "The beauty of industrial utility. Exploring the textures of brushed metal, concrete, and high-precision machinery."
   }
 ];

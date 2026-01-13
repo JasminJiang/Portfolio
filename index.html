@@ -20,6 +20,14 @@
         background: #000;
         color: #fff;
       }
+      /* 隐藏滚动条但保留功能 */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
   <script type="importmap">
 {
@@ -34,5 +42,7 @@
 </head>
   <body>
     <div id="root"></div>
+    <!-- 显式引入入口模块 -->
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>
